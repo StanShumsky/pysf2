@@ -21,7 +21,8 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Intended Audience :: Developers",
     "Topic :: Multimedia :: Sound/Audio",
-    "Topic :: Multimedia :: Sound/Audio :: Sound Libraries",
+    "Topic :: Multimedia :: Sound/Audio :: MIDI",
+    "Topic :: Multimedia :: Sound/Audio :: Synthesis",
     "Topic :: Scientific/Engineering :: Audio Processing",
 ]
 # Single hard runtime dependency. No scipy (numpy biquad chain validated to
