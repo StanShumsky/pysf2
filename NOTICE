@@ -1,0 +1,7 @@
+pysf2
+Copyright 2025-2026 Stan Shumsky
+
+pysf2 implements the SoundFont 2.00/2.01 format as specified in the
+SoundFont 2.01 Technical Specification (Creative Labs, 1998).
+SoundFont is a trademark of its respective owner; this is an independent,
+unaffiliated implementation.

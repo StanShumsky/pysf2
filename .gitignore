@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+
+# Virtualenvs / env
+.venv/
+venv/
+.env
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Audio artifacts (no binary fixtures are committed)
+*.wav
+*.flac
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysf2"
+version = "0.1.0"
+description = "Pure-Python + numpy SoundFont 2 (.sf2) renderer: parse SF2 fonts and render structured MIDI events to offline stereo audio. One runtime dependency (numpy)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Stan Shumsky" }]
+keywords = ["soundfont", "sf2", "synthesis", "sample-based", "midi", "audio", "offline-rendering"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: Sound Libraries",
+    "Topic :: Scientific/Engineering :: Audio Processing",
+]
+# Single hard runtime dependency. No scipy (numpy biquad chain validated to
+# <1e-5 abs against scipy.signal.lfilter), no mido (file I/O stays host-side).
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/StanShumsky/pysf2"
+Repository = "https://github.com/StanShumsky/pysf2"
+Issues = "https://github.com/StanShumsky/pysf2/issues"
+
+[tool.setuptools]
+packages = ["pysf2"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
