@@ -53,3 +53,8 @@ jobs:
         # (id-token: write above) and PyPI mints a short-lived upload token
         # for the project(s) that trust this workflow.
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # PEP 740 attestations off for now: the `twine upload
+          # --attestations` leg fails on this repo (the plain upload works);
+          # re-enable once that leg is debugged.
+          attestations: false
