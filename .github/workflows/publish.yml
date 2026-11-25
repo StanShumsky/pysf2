@@ -34,6 +34,11 @@ jobs:
   publish:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      # Job-level block supersedes the workflow-level one for this job.
+      id-token: write    # PyPI trusted publishing (OIDC exchange)
+      attestations: write  # PEP 740 attestations (the action's default) are
+                        # uploaded via `gh attestation` before twine runs
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
