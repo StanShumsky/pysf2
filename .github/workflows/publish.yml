@@ -7,12 +7,17 @@ on:
 
 permissions:
   contents: read
+  # Required for PyPI trusted publishing (OIDC): GitHub issues a short-lived
+  # identity token that PyPI matches against the project's configured
+  # publisher (PyPI -> Project -> Add a new publisher -> GitHub ->
+  # repository StanShumsky/pysf2, workflow publish.yml) and exchanges for a
+  # 15-minute upload token. No API token / secret needed.
+  id-token: write
 
-# One publish pipeline: test first, then upload to PyPI. The token is a
-# PyPI *API token* (pypi.org -> your account -> "Add API token"), stored as
-# the repository secret `PYPI_API_TOKEN` (Settings -> Secrets and variables
-# -> Actions). API tokens are scoped to the project(s) you choose, and the
-# `upload` permission is all they need -- no account/password involved.
+# One publish pipeline: test first, then upload to PyPI via trusted
+# publishing (OIDC) -- see the `id-token: write` permission below; the
+# PyPI-side counterpart is the pending publisher you already added
+# (pysf2 / GitHub / StanShumsky/pysf2 / publish.yml).
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -35,13 +40,11 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install build tools
-        run: python -m pip install --upgrade build twine
+        run: python -m pip install --upgrade build
       - name: Build sdist and wheel
         run: python -m build
-      - name: Check artifacts
-        run: python -m twine check dist/*
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: python -m twine upload dist/*
+      - name: Publish to PyPI (trusted publishing / OIDC)
+        # No user/password: the action requests an OIDC token from GitHub
+        # (id-token: write above) and PyPI mints a short-lived upload token
+        # for the project(s) that trust this workflow.
+        uses: pypa/gh-action-pypi-publish@release/v1
