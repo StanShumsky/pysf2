@@ -22,8 +22,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Multimedia :: Sound/Audio",
     "Topic :: Multimedia :: Sound/Audio :: MIDI",
-    "Topic :: Multimedia :: Sound/Audio :: Synthesis",
-    "Topic :: Scientific/Engineering :: Audio Processing",
+    "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis",
 ]
 # Single hard runtime dependency. No scipy (numpy biquad chain validated to
 # <1e-5 abs against scipy.signal.lfilter), no mido (file I/O stays host-side).
