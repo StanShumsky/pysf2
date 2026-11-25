@@ -7,13 +7,14 @@ on:
 
 permissions:
   contents: read
+  # Required for PyPI trusted publishing (OIDC): GitHub issues a short-lived
+  # identity token that PyPI matches against the project's configured
+  # publisher (PyPI -> Project -> Add a new publisher -> GitHub ->
+  # repository StanShumsky/pysf2, workflow publish.yml) and exchanges for a
+  # 15-minute upload token. No API token / secret needed.
+  id-token: write
 
-# Publish pipeline: test first, then upload to PyPI.
-#
-# Authentication uses the repository secret `PYPI_API_TOKEN` (a PyPI API
-# token with upload access to the project). The upload is a plain
-# `twine upload`; on failure the server response is re-emitted as `::error::`
-# annotations so the exact cause is retrievable via the GitHub API.
+# Publish pipeline: test first, then upload to PyPI via trusted publishing.
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,6 +31,10 @@ jobs:
   publish:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      # Job-level block supersedes the workflow-level one for this job.
+      id-token: write      # PyPI trusted publishing (OIDC exchange)
+      attestations: write  # PEP 740 attestations (the action's default)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,19 +46,9 @@ jobs:
         run: python -m build
       - name: Check artifacts
         run: python -m twine check dist/*
-      - name: Publish to PyPI (API token)
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          set -o pipefail
-          out=$(python -m twine upload --non-interactive --verbose dist/* 2>&1) && rc=0 || rc=$?
-          echo "$out"
-          if [ "$rc" -ne 0 ]; then
-            # Re-emit the tail of the server response as annotations so the
-            # exact failure is retrievable via the GitHub check-run API.
-            echo "$out" | tail -n 45 | while IFS= read -r line; do
-              echo "::error title=twine-upload-failed::${line}"
-            done
-            exit 1
-          fi
+      - name: Publish to PyPI (trusted publishing / OIDC)
+        # No user/password: the action requests an OIDC token from GitHub
+        # (id-token: write above) and PyPI mints a short-lived upload token
+        # for the project(s) that trust this workflow. Existing files are
+        # skipped, so re-running on the same tag is a safe no-op.
+        uses: pypa/gh-action-pypi-publish@release/v1
